@@ -10,10 +10,13 @@ all_data <- read.csv('owid-covid-data.csv')
 ```
 
 ```{r}
-head(all_data)
+all_data %>%
+  group_by(continent) %>%
+  head()
 ```
 
 ```{r}
-
+all_data %>%
+  ggplot(aes(x=date,y=new_cases_smoothed, color=continent)) +
+  geom_point()
 ```
-
