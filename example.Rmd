@@ -1,9 +1,15 @@
 ```{r}
 library(ggplot2)
 library(tidyverse)
+library(dplyr)
 ```
 
 ```{r}
-top_movies <- read.csv('Top_10000_Popular_Movies.csv')
+stringency_data <- read.csv('covid-stringency-index.csv')
+all_data <- read.csv('owid-covid-data.csv')
+```
+
+```{r}
+head(all_data)
 ```
 
