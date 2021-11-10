@@ -1,0 +1,9 @@
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+top_movies <- read.csv('Top_10000_Popular_Movies.csv')
+```
+
