@@ -1,7 +1,9 @@
 ```{r}
+library(readr)
 library(ggplot2)
-library(tidyverse)
 library(dplyr)
+library(tidymodels)
+tidymodels_prefer()
 ```
 
 ```{r}
@@ -17,6 +19,23 @@ all_data %>%
 
 ```{r}
 all_data %>%
-  ggplot(aes(x=date,y=new_cases_smoothed, color=continent)) +
+  ggplot(aes(x=date,y=new_cases_smoothed_per_million, color=continent)) +
   geom_point()
 ```
+
+```{r}
+lm_spec <-
+    linear_reg() %>% 
+    set_engine(engine = 'lm') %>% 
+    set_mode('regression')
+```
+
+```{r}
+mod1 <- fit(lm_spec,
+            total_deaths ~ stringency_index + population, 
+            data = all_data)
+
+mod1 %>%
+  pluck()
+```
+
