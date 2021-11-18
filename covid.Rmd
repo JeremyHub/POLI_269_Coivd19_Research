@@ -3,6 +3,7 @@ library(readr)
 library(ggplot2)
 library(dplyr)
 library(tidymodels)
+library(rjson)
 tidymodels_prefer()
 ```
 
@@ -12,9 +13,8 @@ all_data <- read.csv('owid-covid-data.csv')
 ```
 
 ```{r}
-all_data %>%
-  filter(iso_code=="ISL") %>%
-  head()
+isl_swe_data <- all_data %>%
+  filter(iso_code=="SWE"|iso_code=='ISL')
 ```
 
 ```{r}
@@ -40,7 +40,8 @@ mod1 %>%
 ```
 
 ```{r}
-
+data_index = fromJSON(file='data_index_orient.json')
+data_column = fromJSON(file='data_column_orient.json')
 ```
 
 
