@@ -50,6 +50,21 @@ data_column = fromJSON(file='data_column_orient.json')
 ```
 
 ```{r}
-data_index$Govresponse_6$IT
+country = 'IT'
+quest = 'Govresponse_6'
+
+
+data_index[[quest]][[country]] %>%
+  as.numeric() %>%
+  mean()
+
+what_questions_are %>%
+  filter(var==quest) %>%
+  select('question')
+
+what_answer_codes_mean %>%
+  filter(var == quest) %>%
+  select('code', 'label')
+
 ```
 
