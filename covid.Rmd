@@ -40,8 +40,16 @@ mod1 %>%
 ```
 
 ```{r}
+what_questions_are = read.csv(file = 'what_questsions_are.csv')
+what_answer_codes_mean = read.csv(file = 'what_answer_codes_mean.csv')
+```
+
+```{r}
 data_index = fromJSON(file='data_index_orient.json')
 data_column = fromJSON(file='data_column_orient.json')
 ```
 
+```{r}
+data_index$Govresponse_6$IT
+```
 
