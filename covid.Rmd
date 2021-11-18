@@ -56,7 +56,9 @@ quest = 'Govresponse_6'
 
 data_index[[quest]][[country]] %>%
   as.numeric() %>%
-  mean()
+  data.frame() %>%
+  ggplot(aes(x=.)) +
+    geom_histogram(bins = 7)
 
 what_questions_are %>%
   filter(var==quest) %>%
