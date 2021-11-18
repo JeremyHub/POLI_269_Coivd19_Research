@@ -11,22 +11,18 @@ questions = pd.read_csv(questions_file_name)
 
 # remove data where country is Nan
 data = data[data['Residency'] != 'Nan']
-print(type(questions))
 
 # remove data in what_questions_are where "question" is not a string
-questions = pd.DataFrame(questions[questions['question'] == questions['question'].astype(str)])
-# print the question data in the fourth row from the "questions" clumn
-print(questions)
+questions = questions[questions['question'] == questions['question'].astype(str)]
+# get and remove the question data where [var] is NA
+group_header_statements = questions[questions['row_id'] == 0]
+questions = questions[questions['row_id'] != 0]
 
 # get unique countries
 countries = data['Residency'].unique()
-
 # get unique questions
-questions = data['var'].unique()
-
-# get unique groups
-groups = questions['var_group'].unique()
-print(groups)
+unique_questions = data['var'].unique()
+# get unique questions in the data
 
 # new dataframe:
 # - one row per country
@@ -38,5 +34,20 @@ print(groups)
 # for each question there in "what_question_are" they are part of a group
 # the first answer in the group is the intro statement
 
-df = pd.DataFrame(columns=questions, index=countries)
+
+country_dict = {}
+
+for index, row in data.iterrows():
+    country_dict[row['Residency']] = country_dict.get(row['Residency'], {})
+    country_dict[row['Residency']][row['var']] = country_dict[row['Residency']].get(row['var'], [])
+    country_dict[row['Residency']][row['DemGen']] = country_dict[row['Residency']].get(row['DemGen'], [])
+    country_dict[row['Residency']][row['quota_age']] = country_dict[row['Residency']].get(row['quota_age'], [])
+    country_dict[row['Residency']][row['var']].append(row['code'])
+    country_dict[row['Residency']][row['DemGen']].append(row['DemGen'])
+    country_dict[row['Residency']][row['quota_age']].append(row['quota_age'])
+
+df = pd.DataFrame.from_dict(country_dict, orient='index')
+# remove columns where the column name is NaN
+df = df.dropna(axis=1, how='all')
 print(df)
+df.to_json('cleaned_data.json', orient='columns')
