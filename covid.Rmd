@@ -50,8 +50,8 @@ data_column = fromJSON(file='data_column_orient.json')
 ```
 
 ```{r}
-country = 'IT'
-quest = 'prep'
+country = 'SE'
+quest = 'Govresponse_1'
 ```
 
 ```{r}
