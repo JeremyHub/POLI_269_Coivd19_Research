@@ -51,22 +51,55 @@ data_column = fromJSON(file='data_column_orient.json')
 
 ```{r}
 country = 'IT'
-quest = 'Govresponse_6'
+quest = 'prep'
+```
 
+```{r}
+put_new_lines <- function(string, num_chars) {
+  if (nchar(string) <= num_chars) {
+    return(string)
+  }
+  first = substr(string, 1, num_chars)
+  last = substr(string, num_chars+1, nchar(string))
+  if (nchar(last) >= num_chars) {
+    last = put_new_lines(last, num_chars)
+  }
+  new_string <- paste(first, "\n", last)
+  return(new_string)
+}
 
-data_index[[quest]][[country]] %>%
-  as.numeric() %>%
-  data.frame() %>%
-  ggplot(aes(x=.)) +
-    geom_histogram(bins = 7)
-
-what_questions_are %>%
+question_text <- what_questions_are %>%
   filter(var==quest) %>%
   select('question')
 
-what_answer_codes_mean %>%
-  filter(var == quest) %>%
+code_text <- what_answer_codes_mean %>%
+  filter(var==quest) %>%
   select('code', 'label')
 
+to_plot <- data_index[[quest]][[country]] %>%
+  as.numeric() %>%
+  data.frame()
+
+to_plot$lab <- code_text$label[match(to_plot$.,code_text$code)]
+
+labels = vector()
+to_paste <- ""
+for (i in 1:max(code_text$code)){
+  to_paste = if (i%%2) "" else "\n \n"
+  if (i %in% code_text$code) {
+    labels <- c(labels, paste(to_paste,put_new_lines(code_text[code_text$code==i,]$label,15)))
+  } else {
+    labels <- c(labels, i)
+  }
+}
+
+title <- put_new_lines(question_text[question_text != "",], 76)
+
+
+to_plot%>%
+  ggplot(aes(x=.))+
+    stat_count() +
+    scale_x_discrete(limits=labels,labels=labels) +
+    labs(title=title)
 ```
 
