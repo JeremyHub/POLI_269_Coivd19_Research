@@ -59,13 +59,17 @@ put_new_lines <- function(string, num_chars) {
   if (nchar(string) <= num_chars) {
     return(string)
   }
-  first = substr(string, 1, num_chars)
-  last = substr(string, num_chars+1, nchar(string))
-  if (nchar(last) >= num_chars) {
-    last = put_new_lines(last, num_chars)
+  for (i in num_chars:nchar(string)) {
+    if (substr(string,i,i) == " ") {
+      first = substr(string, 1, i)
+      last = substr(string, i, nchar(string))
+      if (nchar(last) >= num_chars) {
+        last = put_new_lines(last, num_chars)
+      }
+      new_string <- paste(first, "\n", last)
+      return(new_string)
+    }
   }
-  new_string <- paste(first, "\n", last)
-  return(new_string)
 }
 
 question_text <- what_questions_are %>%
@@ -87,7 +91,7 @@ to_paste <- ""
 for (i in 1:max(code_text$code)){
   to_paste = if (i%%2) "" else "\n \n"
   if (i %in% code_text$code) {
-    labels <- c(labels, paste(to_paste,put_new_lines(code_text[code_text$code==i,]$label,15)))
+    labels <- c(labels, paste(to_paste,put_new_lines(code_text[code_text$code==i,]$label,13)))
   } else {
     labels <- c(labels, i)
   }
