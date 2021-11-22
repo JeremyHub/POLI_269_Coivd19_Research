@@ -4,6 +4,7 @@ library(ggplot2)
 library(dplyr)
 library(tidymodels)
 library(rjson)
+library(stringr)
 tidymodels_prefer()
 ```
 
@@ -43,6 +44,11 @@ mod1 %>%
 what_questions_are = read.csv(file = 'what_questsions_are.csv')
 what_answer_codes_mean = read.csv(file = 'what_answer_codes_mean.csv')
 country_code_data = read.csv(file = "country_code_data.csv")
+mean_data = fromJSON(file="mean_data_per_country.json")
+get_full_name <- function(abv) {
+  to_ret <- (country_code_data %>% filter(Code==abv))$Name
+  return(to_ret)
+}
 ```
 
 ```{r}
@@ -52,18 +58,12 @@ data_index = fromJSON(file='data_with_dates.json')
 
 ```{r}
 countries = c('SE','IT','UK','US','AU','DE','ES','MX','JP','KR','CN')
-country = 'SE'
+country = 'IT'
 quest = 'CanadaQ_2'
 country_full_name = (country_code_data %>% filter(Code==country))$Name
 ```
 
-```{r}
-data_frame = c()
-for (i in length(countries)) {
-  country = countries[i]
-}
-```
-
+# single plot
 ```{r}
 
 put_new_lines <- function(string, num_chars) {
@@ -127,4 +127,15 @@ to_plot%>%
     scale_x_discrete(limits=labels,labels=labels) +
     labs(title=title)
 ```
+
+# multi plot
+```{r}
+d1 <- mean_data[[quest]] %>%
+  data.frame()
+d1 <- data.frame(country=names(d1),avg=t(d1)) %>%
+  mutate(country = gsub(".", " ", country, fixed=TRUE))
+  
+#ggplot(mean_data, aes(x=CanadaQ_2,y=))
+```
+
 
