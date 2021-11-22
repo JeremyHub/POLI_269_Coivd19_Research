@@ -73,7 +73,7 @@ put_new_lines <- function(string, num_chars) {
   for (i in num_chars:nchar(string)) {
     if (substr(string,i,i) == " ") {
       first = substr(string, 1, i)
-      last = substr(string, i, nchar(string))
+      last = substr(string, i+1, nchar(string))
       if (nchar(last) >= num_chars) {
         last = put_new_lines(last, num_chars)
       }
@@ -81,9 +81,12 @@ put_new_lines <- function(string, num_chars) {
       return(new_string)
     }
   }
-  return
+  return(string)
 }
+```
 
+
+```{r}
 question_text <- what_questions_are %>%
   filter(var==quest) %>%
   select('question')
