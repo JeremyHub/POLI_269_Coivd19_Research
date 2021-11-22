@@ -81,6 +81,7 @@ put_new_lines <- function(string, num_chars) {
       return(new_string)
     }
   }
+  return
 }
 
 question_text <- what_questions_are %>%
@@ -110,17 +111,6 @@ for (i in 1:max(code_text$code)){
 
 title <- put_new_lines(question_text[question_text != "",], 76)
 
-average_date = data_index[['EndDate']][[country]]
-average_date = as.Date(as.POSIXct(average_date, origin="1970-01-01"))
-average_date = substr(average_date,6,11)
-average_date = paste("2020",average_date,sep = "")
-
-stringency = (stringency_data %>%
-  filter(Entity == country_full_name) %>%
-  filter(Day == average_date))$stringency_index
-
-print(stringency)
-
 to_plot%>%
   ggplot(aes(x=.))+
     stat_count() +
@@ -128,14 +118,27 @@ to_plot%>%
     labs(title=title)
 ```
 
-# multi plot
+# plot stringency with all countries
 ```{r}
+question_text <- what_questions_are %>%
+  filter(var==quest) %>%
+  select('question')
+
+question_text <- paste("\"", question_text[question_text != "",], sep = "") %>%
+  paste("\" vs stringency per country", sep = "")
+print(question_text)
+title <- put_new_lines(question_text,76)
+
 d1 <- mean_data[[quest]] %>%
   data.frame()
 d1 <- data.frame(country=names(d1),avg=t(d1)) %>%
-  mutate(country = gsub(".", " ", country, fixed=TRUE))
-  
-#ggplot(mean_data, aes(x=CanadaQ_2,y=))
+  mutate(country = gsub(".", " ", country, fixed=TRUE)) %>%
+  mutate(stringency = as.numeric(mean_data$stringnecy))
+
+d1 %>%
+  ggplot(aes(x=avg, y=stringency, color=country)) +
+    geom_point() +
+    labs(title=title)
 ```
 
 
