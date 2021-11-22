@@ -42,19 +42,30 @@ mod1 %>%
 ```{r}
 what_questions_are = read.csv(file = 'what_questsions_are.csv')
 what_answer_codes_mean = read.csv(file = 'what_answer_codes_mean.csv')
+country_code_data = read.csv(file = "country_code_data.csv")
 ```
 
 ```{r}
-data_index = fromJSON(file='data_index_orient.json')
-data_column = fromJSON(file='data_column_orient.json')
+#data_index = fromJSON(file='data_index_orient.json')
+data_index = fromJSON(file='data_with_dates.json')
 ```
 
 ```{r}
+countries = c('SE','IT','UK','US','AU','DE','ES','MX','JP','KR','CN')
 country = 'SE'
-quest = 'Govresponse_1'
+quest = 'CanadaQ_2'
+country_full_name = (country_code_data %>% filter(Code==country))$Name
 ```
 
 ```{r}
+data_frame = c()
+for (i in length(countries)) {
+  country = countries[i]
+}
+```
+
+```{r}
+
 put_new_lines <- function(string, num_chars) {
   if (nchar(string) <= num_chars) {
     return(string)
@@ -99,6 +110,16 @@ for (i in 1:max(code_text$code)){
 
 title <- put_new_lines(question_text[question_text != "",], 76)
 
+average_date = data_index[['EndDate']][[country]]
+average_date = as.Date(as.POSIXct(average_date, origin="1970-01-01"))
+average_date = substr(average_date,6,11)
+average_date = paste("2020",average_date,sep = "")
+
+stringency = (stringency_data %>%
+  filter(Entity == country_full_name) %>%
+  filter(Day == average_date))$stringency_index
+
+print(stringency)
 
 to_plot%>%
   ggplot(aes(x=.))+
