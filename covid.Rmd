@@ -207,8 +207,6 @@ tune_output <- tune_grid( # new function for tuning parameters
 )
 
 best_se_penalty <- select_by_one_std_err(tune_output, metric = 'mae', desc(penalty)) # choose largest penalty value within 1 se of the lowest cv mae
-best_se_penalty
-
 final_wf_se <- finalize_workflow(lasso_wf_tune, best_se_penalty) # incorporates penalty value to workflow
 
 final_fit_se <- fit(final_wf_se, data = compressed_data)
