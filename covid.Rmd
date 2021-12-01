@@ -172,7 +172,10 @@ aggregate_data %>%
 fear_scores <- aggregate(Average ~ country, aggregate_data, mean)
 regression_data <- merge(compress_df(aggregate_data_func(controlling_for_questions)), fear_scores) %>%
   mutate(fear_index = Average) %>%
-  select(-Average)
+  select(-Average) %>%
+  filter(country != 'Mexico') %>%
+  mutate(stringency = normalit(stringency)+1) %>%
+  mutate(stringency_sq = stringency^2)
 
 lm_spec <-
     linear_reg() %>% 
@@ -191,4 +194,3 @@ regression_data %>%
   geom_point()
   
 ```
-
