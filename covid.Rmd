@@ -174,8 +174,7 @@ regression_data <- merge(compress_df(aggregate_data_func(controlling_for_questio
   mutate(fear_index = Average) %>%
   select(-Average) %>%
   filter(country != 'Mexico') %>%
-  mutate(stringency = normalit(stringency)+1) %>%
-  mutate(stringency_sq = stringency^2)
+  mutate(stringency_sq = (normalit(stringency)-0.5)^2)
 
 lm_spec <-
     linear_reg() %>% 
@@ -183,7 +182,8 @@ lm_spec <-
     set_mode('regression')
 
 mod <- fit(lm_spec,
-            fear_index ~ . -country,
+            #fear_index ~ stringency_sq,
+            fear_index ~ . -country -stringency,
             data = regression_data)
 
 mod %>%
