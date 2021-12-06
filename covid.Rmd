@@ -36,8 +36,8 @@ data_index = fromJSON(file='data_with_dates.json')
 countries = c('SE','IT','UK','US','AU','DE','ES','MX','JP','KR','CN')
 country = 'IT'
 quest = 'FinitePool_2'
-#fear_questions = c('CanadaQ_2', 'CanadaQ_1', 'Longitude_2', 'FinitePool_2', 'FinitePool_5', 'CanadaQ_3', 'Friends_8', 'Personal_8')
-fear_questions = c('FinitePool_2')
+fear_questions = c('CanadaQ_2', 'CanadaQ_1', 'Longitude_2', 'FinitePool_2', 'FinitePool_5', 'CanadaQ_3', 'Friends_8', 'Personal_8')
+#fear_questions = c('FinitePool_2')
 controlling_for_questions = c('COVIDeffect_4', 'COVIDeffect_2' ,'COVIDeffect_3', 'COVIDeffect_1')
 country_full_name = (country_code_data %>% filter(Code==country))$Name
 ```
@@ -206,7 +206,8 @@ person_data = read.csv('person_dat.csv')
 person_data <- person_data %>%
   mutate(govTrust = govtrustQ1,
          media_trust = journalisttrustQ1,
-         fear = FinitePool_2) %>%
+         fear = FinitePool_2,
+         personal_exp = COVIDeffect_1) %>%
   select(govTrust, media_trust, fear) %>%
   na.omit()
 
@@ -216,7 +217,7 @@ lm_spec <-
     set_mode('regression')
 
 mod <- fit(lm_spec,
-            fear ~ media_trust + govTrust,
+            fear ~ media_trust,
             data = person_data)
 
 mod %>%
@@ -226,6 +227,5 @@ person_data %>%
   select(govTrust, media_trust, fear) %>%
   ggplot(aes(x=as.factor(media_trust), y=fear)) +
   geom_boxplot()
-
 ```
 
