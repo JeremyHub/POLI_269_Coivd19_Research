@@ -36,9 +36,9 @@ data_index = fromJSON(file='data_with_dates.json')
 countries = c('SE','IT','UK','US','AU','DE','ES','MX','JP','KR','CN')
 country = 'IT'
 quest = 'FinitePool_2'
-fear_questions = c('CanadaQ_2', 'CanadaQ_1', 'Longitude_2', 'FinitePool_2', 'FinitePool_5', 'CanadaQ_3', 'Friends_8', 'Personal_8')
+fear_questions = c('CanadaQ_2', 'CanadaQ_1', 'Longitude_2', 'Friends_8', 'Personal_8')
 #fear_questions = c('FinitePool_2')
-controlling_for_questions = c('COVIDeffect_4', 'COVIDeffect_2' ,'COVIDeffect_3', 'COVIDeffect_1')
+controlling_for_questions = c('COVIDeffect_4', 'COVIDeffect_1')
 country_full_name = (country_code_data %>% filter(Code==country))$Name
 ```
 
@@ -164,7 +164,7 @@ compressed_data <- compress_df(aggregate_data)
 aggregate_data %>%
   ggplot(aes(y=Average, x=stringency, color=country)) +
     geom_point() +
-    labs(title=title)
+    labs(title=title, x="Stringency", y="Average Fear per Question")
 ```
 
 # regression with question and stringency with all countries
@@ -174,8 +174,7 @@ fear_scores <- aggregate(Average ~ country, aggregate_data, mean)
 regression_data <- merge(compress_df(aggregate_data_func(controlling_for_questions)), fear_scores) %>%
   mutate(fear_index = Average) %>%
   select(-Average) %>%
-  filter(country != 'Mexico') %>%
-  mutate(stringency_sq = (normalit(stringency)-0.5)^2)
+  filter(country != 'Mexico')
 
 lm_spec <-
     linear_reg() %>% 
@@ -192,9 +191,10 @@ mod %>%
 
 regression_data %>%
   select(-country) %>%
-  ggplot(aes(x=stringency_sq, y=fear_index)) +
+  ggplot(aes(x=stringency, y=fear_index)) +
   geom_point() +
-  geom_smooth(se=FALSE)
+  geom_smooth(se=FALSE) +
+  labs(x = "Covid-19 Policy Stringency", y="Average Composite Fear Score", title="Fear of Covid-19 vs Stringency of Covid-19 Policy")
   #geom_smooth(method="lm", level=0.90, formula = y ~ x)
 ```
 
@@ -207,8 +207,9 @@ person_data <- person_data %>%
   mutate(govTrust = govtrustQ1,
          media_trust = journalisttrustQ1,
          fear = FinitePool_2,
-         personal_exp = COVIDeffect_1) %>%
-  select(govTrust, media_trust, fear) %>%
+         personal_exp = COVIDeffect_1,
+         loved_one_exp = COVIDeffect_4) %>%
+  select(media_trust, fear, personal_exp, loved_one_exp) %>%
   na.omit()
 
 lm_spec <-
@@ -217,15 +218,16 @@ lm_spec <-
     set_mode('regression')
 
 mod <- fit(lm_spec,
-            fear ~ media_trust,
+            fear ~ .,
             data = person_data)
 
 mod %>%
   tidy()
 
 person_data %>%
-  select(govTrust, media_trust, fear) %>%
+  select(media_trust, fear) %>%
   ggplot(aes(x=as.factor(media_trust), y=fear)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(x=put_new_lines("Thinking about the coronavirus/COVID-19 information: how much did you trust the information from journalists and commentators in the media?",75), y="Composite Fear Score", title="Fear of Covid-19 vs Trust in Media")
 ```
 
