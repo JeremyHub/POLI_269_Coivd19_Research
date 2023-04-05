@@ -195,7 +195,7 @@ regression_data %>%
   geom_point() +
   geom_smooth(se=FALSE) +
   labs(x = "Covid-19 Policy Stringency", y="Average Composite Fear Score", title="Fear of Covid-19 vs Stringency of Covid-19 Policy")
-  #geom_smooth(method="lm", level=0.90, formula = y ~ x)
+  geom_smooth(method="lm", level=0.90, formula = y ~ x)
 ```
 
 # doing stuff with individual data
